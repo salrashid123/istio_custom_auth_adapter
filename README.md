@@ -520,6 +520,3 @@ THis repo is a simple demo i setup on behalf of a customer looking to do the sam
 the simplicity of this check of running the adapter in and out of cluster is hopefully of use.  
 
 I'm positive i didn't setup the setup and install instructions in the proper 'golang vendoring' structure but it does the job.   
-
-One specific note to call out:  
-I did notice a pretty aggressive mixer cache (which its supposed to do) but...it didn't request authorization for every request..even if the header was malformed on subsequent after a success (close in time) requests (which is really bad)..there has to be a way to disable this for a an `authorization` check if them header value is different...i didn't look into this but if you will certainly want to alter this behavior (eg, especially when there is a malformed heaer that is passed through without a check after success...)
