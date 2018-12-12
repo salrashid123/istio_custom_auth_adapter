@@ -46,7 +46,7 @@ Nothing much, this adapter just checks to see if a very specific header is sent 
 curl -H "x-custom-token: abc" https://<istio_gateway_ip>/
 ```
 
-1. Setup Environment Variables
+### 1. Setup Environment Variables
 
 First clone this MIXER_REPO
 ```
@@ -61,7 +61,7 @@ export ISTIO=$GOPATH/src/istio.io
 ```
 
 
-2. Get istio source
+### 2. Get istio source
 
 ```
 mkdir -p $GOPATH/src/istio.io/
@@ -69,14 +69,14 @@ cd $GOPATH/src/istio.io/
 git clone https://github.com/istio/istio
 ```
 
-3. Build mixer server,client binary
+### 3. Build mixer server,client binary
 
 ```
 pushd $ISTIO/istio && make mixs
 pushd $ISTIO/istio && make mixc
 ```
 
-4. (optional) Copy and build Custom Adapter skeleton
+### 4. (optional) Copy and build Custom Adapter skeleton
 
 ```
 mkdir $MIXER_REPO/adapter/mygrpcadapter/
@@ -86,7 +86,7 @@ go build ./...
 ```
 
 
-5. Copy Configuration .proto
+### 5. Copy Configuration .proto
 
 The `config.proto` file defines the operator specified runtime parameters.  In our case, it just holds the Header value to check for,
 
@@ -102,7 +102,7 @@ mkdir -p $MIXER_REPO/adapter/mygrpcadapter/config
 cp  $ROOT_FOLDER/mygrpcadapter/config/config.proto $MIXER_REPO/adapter/mygrpcadapter/config/config.proto
 ```
 
-6. Copy Adapter implementation with build directives
+### 6. Copy Adapter implementation with build directives
 
 `mygrpcadapter_impl.go` contains the actual business logic on what to do in this handler once the mixer passes through the header.
 
@@ -127,7 +127,7 @@ go generate ./...
 go build ./...
 ```
 
-7. Copy and Stage the generated files
+### 7. Copy and Stage the generated files
 
 
 Lets copy the generated files and stage them so we can run local tests and use this folder to deploy to istio
@@ -139,7 +139,7 @@ cp $MIXER_REPO/testdata/config/attributes.yaml $MIXER_REPO/adapter/mygrpcadapter
 cp $MIXER_REPO/template/authorization/template.yaml $MIXER_REPO/adapter/mygrpcadapter/testdata
 ```
 
-8. Create Adapter Starter
+### 8. Create Adapter Starter
 
 This app just launches the adapter gRPC server:
 
@@ -148,7 +148,7 @@ mkdir -p $MIXER_REPO/adapter/mygrpcadapter/cmd
 cp  $ROOT_FOLDER/mygrpcadapter/cmd/main.go $MIXER_REPO/adapter/mygrpcadapter/cmd/
 ```
 
-9. Copy Operator config
+### 9. Copy Operator config
 
 The `sample_operator_cfg.yaml` file contains the definition and configuration parameters for the mixer.
 
@@ -181,7 +181,7 @@ cp  $ROOT_FOLDER/mygrpcadapter/testdata/sample_operator_cfg.yaml $MIXER_REPO/ada
 
 ---
 
-10. Test Locally
+### 10. Test Locally
 
 Lets test the mixer and adapter locally
 
@@ -194,7 +194,7 @@ export MIXER_REPO=$GOPATH/src/istio.io/istio/mixer
 export ISTIO=$GOPATH/src/istio.io
 ```
 
-11. Start local Adapter
+### 11. Start local Adapter
 
 This starts the local grpc Adapter
 
@@ -203,7 +203,7 @@ cd $MIXER_REPO/adapter/mygrpcadapter
 go run cmd/main.go 44225
 ```
 
-12. Start Local mixer server
+### 12. Start Local mixer server
 
 ```
 $GOPATH/out/linux_amd64/release/mixs server \
@@ -226,7 +226,7 @@ Starting gRPC server on port 9091
 
 ```
 
-13. Sent direct request to mixer
+### 13. Sent direct request to mixer
 
 Now use the mixer client to send a request to the mixer directly
 
@@ -275,7 +275,7 @@ Check RPC completed successfully. Check status was PERMISSION_DENIED (h1.handler
 ok now that we have it running locally, lets generate and run this 'in-cluster' as a Service
 
 
-14. Create a Adapter docker image
+### 14. Create a Adapter docker image
 
 Lets create a docker image that encapsulates the Adapter:
 
@@ -295,7 +295,7 @@ docker push salrashid123/mygrpcadapter
 
 NOTE: you have two choices here:  you can deploy the adapter as a k8s cluster service or as a stand-alone service.
 
-15a.  Deploying Adapter as Cluster Service
+### 15a.  Deploying Adapter as Cluster Service
 
 In this mode, we will wrap the Adapter as a cluster service called `mygrpcadapterservice`:
 
@@ -349,8 +349,7 @@ now deploy the Adapter as a service:
 kubectl apply -f $ROOT_FOLDER/cluster_service.yaml
 ```
 
-
-15b.  Deploy as stand alone remote server
+### 15b.  Deploy as stand alone remote server
 
 In this mode, the adapter runs entirely standalone outside of the GKE cluster.  Setting this up a couple more steps but the easiest is to 'just run' the docker container above:
 
@@ -360,7 +359,7 @@ Create a VM with a public IP address (yeah, this is just a demo so i can do this
 docker run -p 44225:44225 salrashid123/mygrpcadapter:latest
 ```
 
-16.  Deploy configurations for adapter to ISTIO
+### 16.  Deploy configurations for adapter to ISTIO
 
 We're now at the point to deploy our full adapter config to istio.
 
@@ -375,8 +374,7 @@ kubectl apply -f $MIXER_REPO/adapter/mygrpcadapter/testdata/attributes.yaml -f $
 kubectl apply -f $MIXER_REPO/adapter/mygrpcadapter/testdata/mygrpcadapter.yaml
 ```
 
-
-17a. Run Adapter in Cluster
+### 17a. Run Adapter in Cluster
 
 If you want to run the Adapter as a cluster service:
 
@@ -406,7 +404,7 @@ If you want to run the Adapter as a cluster service:
   2018-12-12T17:59:49.251833Z	info	pickfirstBalancer: HandleSubConnStateChange: 0xc4211e2cb0, READY
   ```
 
-17b. Run off-cluster
+### 17b. Run off-cluster
  If you want to run the Adapter as an off-cluster service, that host must be accessible from the istio cluster.
  In my case, i setup a GCE VM with a public IP (`35.184.34.117:44225`) and opened up the port specified.
 
@@ -429,11 +427,11 @@ If you want to run the Adapter as a cluster service:
    kubectl apply -f $MIXER_REPO/adapter/mygrpcadapter/testdata/sample_operator_cfg.yaml
  ```
 
-18.  Test
+### 18.  Test
 
 Now send over a request to the gatewayIP address of your istio cluster with the header name and value
 
-`
+```
 curl -vk -H "x-custom-token: abc" https://35.184.93.12/`
 
 
@@ -447,7 +445,7 @@ curl -vk -H "x-custom-token: abc" https://35.184.93.12/`
 < server: istio-envoy
 
 Hello from Express!
-`
+```
 
 If you deployed the as a cluster service, you should see
 
@@ -499,7 +497,7 @@ k: custom_token_header v: abc
 2018-12-12T18:05:36.016781Z	info	success!!
 ```
 
-19.  Cleanup
+### 19.  Cleanup
 
 You can either delete the whole cluster or revert the changes entirely:
 
@@ -519,6 +517,9 @@ template "authorization" deleted
 ## Conclusion
 
 THis repo is a simple demo i setup on behalf of a customer looking to do the same. While you can achieve simple header checks inline without a full blown mixer adapter (eg with a [LUA filters](https://github.com/salrashid123/istio_helloworld#lua-httpfilters)),
-the simplicity of this check of running the adapter in and out of cluster is hopefully of use.  I'm positive i didn't setup the setup and install instructions in the proper 'golang vendoring' structure but it does the job.   One specific note to call out:  I did notice a very
-pretty aggressive mixer cache where it didn't request authorization for every request..even if the header was malformed on subsequent after a success (close in time) requests (which is really, really bad)..there has to be a way to disable this for a an `authorization` check if them
-header value is different...i didn't look into this but if you will certainly want to alter this behavior (eg, especially when there is a malformed heaer that is passed through without a check after success...)
+the simplicity of this check of running the adapter in and out of cluster is hopefully of use.  
+
+I'm positive i didn't setup the setup and install instructions in the proper 'golang vendoring' structure but it does the job.   
+
+One specific note to call out:  
+I did notice a pretty aggressive mixer cache (which its supposed to do) but...it didn't request authorization for every request..even if the header was malformed on subsequent after a success (close in time) requests (which is really bad)..there has to be a way to disable this for a an `authorization` check if them header value is different...i didn't look into this but if you will certainly want to alter this behavior (eg, especially when there is a malformed heaer that is passed through without a check after success...)
