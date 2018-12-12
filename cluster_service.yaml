@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mygrpcadapterservice
+  namespace: istio-system
+  labels:
+    app: mygrpcadapter
+spec:
+  type: ClusterIP
+  ports:
+  - name: grpc
+    protocol: TCP
+    port: 44225
+    targetPort: 44225
+  selector:
+    app: mygrpcadapter
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mygrpcadapter
+  namespace: istio-system
+  labels:
+    app: mygrpcadapter
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mygrpcadapter
+      annotations:
+        sidecar.istio.io/inject: "false"
+        scheduler.alpha.kubernetes.io/critical-pod: ""
+    spec:
+      containers:
+      - name: mygrpcadapter
+        image: salrashid123/mygrpcadapter:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 44225

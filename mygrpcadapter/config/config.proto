@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+// config for mygrpcadapter
+package adapter.mygrpcadapter.config;
+
+import "gogoproto/gogo.proto";
+
+option go_package="config";
+
+// config for mygrpcadapter
+message Params {
+  
+    // header name to check for custom token
+    string auth_key = 1;
+}
