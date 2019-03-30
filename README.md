@@ -31,6 +31,12 @@ You can run the customer external adapter as a separate k8s Service or entirely 
     - I'd suggest following [these instructions](https://github.com/salrashid123/istio_helloworld#create-a-110-gke-cluster-and-bootstrap-istio)
   - [BookInfo](https://istio.io/docs/examples/bookinfo/)
 
+>> Note, in `istio-1.1`, [policy checks are disabled](https://istio.io/docs/reference/config/installation-options/).
+
+While setting up the cluster using the instructions above, set the value 
+```
+--set global.disablePolicyChecks=false
+```
 
 ## Setup
 
