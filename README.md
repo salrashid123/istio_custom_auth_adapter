@@ -1,5 +1,7 @@
 # Simple Istio Mixer Out of Process Authorization Adapter
 
+>> NOTE: 6/2/20:  DO not use.  The in-mixer authorization system described here is deprecated.  Use [External Authorization Server with Istio](https://github.com/salrashid123/istio_external_authorization_server)
+
 ## Introduction
 
 Sample Istio out of process Mixer Adapter that handles authorization checks.   Istio already ships with baseline [Authentication](https://istio.io/docs/concepts/security/#authentication) and [Authorization](https://istio.io/docs/concepts/security/#authorization) but users are free to inject custom authorization directly into the Mixer as a custom policy [Adapter](https://istio.io/docs/concepts/policies-and-telemetry/#adapters)
